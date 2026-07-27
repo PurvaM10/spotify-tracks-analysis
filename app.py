@@ -1,19 +1,39 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import base64
 from PIL import Image
 
-st.set_page_config(page_title="NIFTY 500 Analysis", layout="wide")
+def add_bg(image_file):
+    with open(image_file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
 
-st.title("📊 NIFTY 500 Data Analysis WebApp")
 
-# Display NIFTY 500 image on the front page
-try:
-    image = Image.open("thibault-penin-SwKf1x2_hRo-unsplash.jpg")  # make sure this image is in your working directory
-    st.image(image, caption="SP", use_column_width=True)
-except:
-    st.info("Add an image named 'nifty500_overview.png' in your project folder to display here.")
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image:
+                linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url("data:image/jpeg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.set_page_config(page_title="Spotify Tracks Analysis", layout="wide")
+
+add_bg("images/background.jpg")
+
+st.title("Spotify Tracks Analysis")
+st.title("Case study on Spotify Tracks")
 
 # File uploader
 file = st.sidebar.file_uploader("Upload your file", type=['csv', 'xlsx'])
@@ -25,6 +45,7 @@ if file:
         df = pd.read_excel(file)
 
     st.sidebar.success("File uploaded successfully!")
+
 
     # Sidebar navigation
     menu = st.sidebar.radio("Navigate", ["Data Overview", "Statistics", "Visualization", "Filter Data"])
@@ -92,9 +113,9 @@ if file:
 
         # Option to download filtered data
         csv = filtered_df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download Filtered Data", data=csv, file_name="filtered_nifty500.csv", mime="text/csv")
+        st.download_button("Download Filtered Data", data=csv, file_name="filtered_spotify_tracks.csv", mime="text/csv")
 
 else:
-    st.warning("Please upload a NIFTY 500 dataset to begin.")
+    st.warning("Please upload a Spotify tracks dataset to begin.")
 
 st.sidebar.caption("Built with  using Streamlit")
